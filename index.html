@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MK Electric - Diseño REBT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com"></script>
+    <style>
+        .canvas-container { border: 2px solid #334155; border-radius: 8px; background: #f8fafc; }
+        .sidebar { height: calc(100vh - 80px); overflow-y: auto; }
+        .tooltip { position: absolute; background: rgba(15, 23, 42, 0.9); color: white; padding: 5px 10px; border-radius: 4px; font-size: 12px; pointer-events: none; visibility: hidden; z-index: 100; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 font-sans overflow-hidden">
+
+    <!-- Header con Logo MK -->
+    <header class="h-20 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-6">
+        <div class="flex items-center gap-4">
+            <!-- Logo MK Diseño Eléctrico -->
+            <svg width="50" height="50" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="48" fill="white" />
+                <path d="M25 75 V25 L50 50 L75 25 V75" stroke="#EAB308" stroke-width="6" fill="none" />
+                <circle cx="25" cy="75" r="4" fill="#94a3b8" /><circle cx="25" cy="25" r="4" fill="#94a3b8" />
+                <circle cx="50" cy="50" r="4" fill="#94a3b8" /><circle cx="75" cy="25" r="4" fill="#94a3b8" />
+                <circle cx="75" cy="75" r="4" fill="#94a3b8" />
+            </svg>
+            <h1 class="text-xl font-bold tracking-tight text-white">MK <span class="text-yellow-500">ELECTRICAL CAD</span></h1>
+        </div>
+        
+        <div class="flex gap-3">
+            <button class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-sm font-medium">Subir Plano (PDF/JPG)</button>
+            <button class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded text-sm font-medium">Eliminar</button>
+            <button onclick="downloadPDF()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded text-sm font-medium text-white">Descargar PDF</button>
+        </div>
+    </header>
+
+    <main class="flex">
+        <!-- Columna Izquierda: Eléctrica -->
+        <aside class="sidebar w-64 bg-slate-800 p-4 border-r border-slate-700">
+            <h2 class="text-xs font-bold text-slate-400 uppercase mb-4">Componentes REBT</h2>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="addComp('IGA')" class="bg-slate-700 p-2 rounded text-xs hover:bg-yellow-600">IGA</button>
+                <button onclick="addComp('ID')" class="bg-slate-700 p-2 rounded text-xs hover:bg-yellow-600">ID</button>
+                <button onclick="addComp('C1')" class="bg-slate-700 p-2 rounded text-xs hover:bg-yellow-600 text-blue-300 font-bold">Luz (C1)</button>
+                <button onclick="addComp('C2')" class="bg-slate-700 p-2 rounded text-xs hover:bg-yellow-600 text-green-300 font-bold">Toma (C2)</button>
+                <button onclick="addCable('Azul')" class="bg-blue-900 p-2 rounded text-xs col-span-2 text-center">Cable Neutro (Azul)</button>
+                <button onclick="addCable('Marron')" class="bg-amber-900 p-2 rounded text-xs col-span-2 text-center">Cable Fase (Marrón)</button>
+            </div>
+        </aside>
+
+        <!-- Canvas Central -->
+        <section class="flex-1 p-6 relative">
+            <canvas id="mainCanvas"></canvas>
+            <div id="tooltip" class="tooltip">Info Técnica REBT</div>
+        </section>
+
+        <!-- Columna Derecha: Arquitectura -->
+        <aside class="sidebar w-64 bg-slate-800 p-4 border-l border-slate-700">
+            <h2 class="text-xs font-bold text-slate-400 uppercase mb-4">Arquitectura</h2>
+            <button onclick="addWall()" class="w-full bg-slate-600 p-2 rounded text-xs mb-2 hover:bg-slate-500">Dibujar Pared (m)</button>
+            <button onclick="addDoor()" class="w-full bg-slate-600 p-2 rounded text-xs mb-2 hover:bg-slate-500">Puerta</button>
+            <button onclick="addWindow()" class="w-full bg-slate-600 p-2 rounded text-xs hover:bg-slate-500">Ventana</button>
+        </aside>
+    </main>
+
+    <script>
+        const canvas = new fabric.Canvas('mainCanvas', {
+            width: window.innerWidth - 512,
+            height: window.innerHeight - 150,
+            backgroundColor: '#ffffff'
+        });
+
+        const tooltip = document.getElementById('tooltip');
+
+        function addComp(name) {
+            const rect = new fabric.Rect({
+                left: 100, top: 100, fill: '#3b82f6', width: 40, height: 40, rx: 5, ry: 5
+            });
+            const text = new fabric.Text(name, { fontSize: 12, left: 105, top: 112, fill: 'white' });
+            const group = new fabric.Group(, { data: { info: `Circuito: ${name}, Normativa REBT` } });
+            canvas.add(group);
+        }
+
+        canvas.on('mouse:over', function(e) {
+            if (e.target && e.target.data) {
+                tooltip.style.visibility = 'visible';
+                tooltip.innerText = e.target.data.info;
+                tooltip.style.left = (e.e.clientX + 10) + 'px';
+                tooltip.style.top = (e.e.clientY + 10) + 'px';
+            }
+        });
+
+        canvas.on('mouse:out', () => tooltip.style.visibility = 'hidden');
+
+        function downloadPDF() { alert('Función de exportación PDF lista para activar con jsPDF.'); }
+    </script>
+</body>
+</html>
