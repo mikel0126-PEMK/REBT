@@ -2,92 +2,90 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>MK Electric CAD</title>
+    <title>MK ELECTRIC CAD - REBT</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- NUEVO ENLACE DE LIBRERÍA MÁS ESTABLE -->
-    <script src="https://cdnjs.cloudflare.com"></script>
+    <!-- CARGA DE LIBRERÍA CON FALLBACK SEGURO -->
+    <script src="https://unpkg.com"></script>
 </head>
-<body class="bg-[#1a2233] text-slate-300 overflow-hidden">
+<body class="bg-[#1a2233] text-slate-300 overflow-hidden font-sans">
 
     <header class="h-16 bg-[#111827] flex items-center justify-between px-6 border-b border-slate-800">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center font-bold text-yellow-500 text-xl">MK</div>
-            <h1 class="font-bold text-white tracking-widest uppercase">MK Electric CAD</h1>
+            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center font-bold text-yellow-500 text-xl border-2 border-yellow-500">MK</div>
+            <h1 class="font-bold text-white tracking-widest uppercase text-sm">MK Electric CAD</h1>
         </div>
-        <button onclick="limpiar()" class="bg-red-600 hover:bg-red-500 px-4 py-1 rounded text-xs text-white font-bold transition">Limpiar Todo</button>
+        <button onclick="window.location.reload()" class="bg-red-600 hover:bg-red-500 px-4 py-1 rounded text-[10px] text-white font-bold transition">REINICIAR APP</button>
     </header>
 
     <main class="flex h-[calc(100vh-64px)]">
         <!-- Izquierda: Componentes -->
-        <aside class="w-64 bg-[#111827] p-4 border-r border-slate-800 space-y-6 overflow-y-auto">
+        <aside class="w-64 bg-[#111827] p-4 border-r border-slate-800 space-y-6">
             <section>
-                <h2 class="text-[10px] text-slate-500 font-bold uppercase mb-3">Protecciones REBT</h2>
+                <h2 class="text-[10px] text-slate-500 font-bold uppercase mb-3 tracking-widest">Protecciones REBT</h2>
                 <div class="grid grid-cols-2 gap-2">
-                    <button onclick="crearPieza('IGA', '#ef4444')" class="bg-slate-800 p-2 rounded text-[10px] hover:bg-slate-700">IGA</button>
-                    <button onclick="crearPieza('ID', '#f59e0b')" class="bg-slate-800 p-2 rounded text-[10px] hover:bg-slate-700">ID</button>
-                    <button onclick="crearPieza('LUZ (C1)', '#3b82f6')" class="bg-blue-900/50 p-2 rounded text-[10px] hover:bg-blue-800">LUZ (C1)</button>
-                    <button onclick="crearPieza('TOMA (C2)', '#10b981')" class="bg-green-900/50 p-2 rounded text-[10px] hover:bg-green-800">TOMA (C2)</button>
+                    <button onclick="addElt('IGA', '#ef4444')" class="bg-slate-800 p-2 rounded text-[10px] hover:bg-yellow-600 transition active:scale-95">IGA</button>
+                    <button onclick="addElt('ID', '#f59e0b')" class="bg-slate-800 p-2 rounded text-[10px] hover:bg-yellow-600 transition active:scale-95">ID</button>
+                    <button onclick="addElt('C1-LUZ', '#3b82f6')" class="bg-blue-900/50 p-2 rounded text-[10px] hover:bg-blue-800 transition active:scale-95">LUZ (C1)</button>
+                    <button onclick="addElt('C2-TOMA', '#10b981')" class="bg-green-900/50 p-2 rounded text-[10px] hover:bg-green-800 transition active:scale-95">TOMA (C2)</button>
                 </div>
             </section>
 
             <section>
-                <h2 class="text-[10px] text-slate-500 font-bold uppercase mb-3">Cableado (Colores)</h2>
-                <button onclick="crearCable('#92400e')" class="w-full bg-amber-900/30 border border-amber-700 p-2 rounded text-[10px] text-left mb-2">Fase (Marrón)</button>
-                <button onclick="crearCable('#1e40af')" class="w-full bg-blue-900/30 border border-blue-700 p-2 rounded text-[10px] text-left mb-2">Neutro (Azul)</button>
-                <button onclick="crearCable('#166534')" class="w-full bg-green-900/30 border border-green-700 p-2 rounded text-[10px] text-left">Tierra (Verde/Amar.)</button>
+                <h2 class="text-[10px] text-slate-500 font-bold uppercase mb-3 tracking-widest">Cableado REBT</h2>
+                <button onclick="addLine('#92400e')" class="w-full bg-amber-900/30 border border-amber-700 p-2 rounded text-[10px] text-left mb-2 hover:bg-amber-800 transition">Fase (Marrón)</button>
+                <button onclick="addLine('#1e40af')" class="w-full bg-blue-900/30 border border-blue-700 p-2 rounded text-[10px] text-left mb-2 hover:bg-blue-800 transition">Neutro (Azul)</button>
+                <button onclick="addLine('#166534')" class="w-full bg-green-900/30 border border-green-700 p-2 rounded text-[10px] text-left hover:bg-green-800 transition">Tierra (Verde/Amar.)</button>
             </section>
         </aside>
 
-        <!-- Centro: Canvas -->
-        <section class="flex-1 p-8 flex justify-center items-center">
-            <canvas id="canvas_electrico" class="rounded shadow-2xl"></canvas>
+        <!-- Centro: Lienzo -->
+        <section class="flex-1 bg-slate-800 p-8 flex justify-center items-center">
+            <canvas id="mainCanvas" class="rounded shadow-2xl bg-white"></canvas>
         </section>
 
         <!-- Derecha: Arquitectura -->
         <aside class="w-64 bg-[#111827] p-4 border-l border-slate-800">
-            <h2 class="text-[10px] text-slate-500 font-bold uppercase mb-3 font-bold uppercase">Arquitectura</h2>
-            <button onclick="crearPared()" class="w-full bg-slate-800 p-2 rounded text-[10px] hover:bg-slate-700">Dibujar Pared (m)</button>
+            <h2 class="text-[10px] text-slate-500 font-bold uppercase mb-3 tracking-widest">Arquitectura</h2>
+            <button onclick="addWall()" class="w-full bg-slate-700 p-2 rounded text-[10px] hover:bg-slate-600 transition active:scale-95">Dibujar Pared (m)</button>
         </aside>
     </main>
 
     <script>
-        // Inicialización segura del lienzo
-        let canvas;
-        window.onload = function() {
-            canvas = new fabric.Canvas('canvas_electrico', {
-                width: 800,
-                height: 600,
+        var canvas;
+        
+        // Inicialización forzada
+        window.addEventListener('load', function() {
+            canvas = new fabric.Canvas('mainCanvas', {
+                width: 750,
+                height: 550,
                 backgroundColor: '#ffffff'
             });
-        };
+            console.log("Canvas listo");
+        });
 
-        function crearPieza(texto, color) {
-            const rect = new fabric.Rect({ width: 60, height: 40, fill: color, rx: 5 });
-            const label = new fabric.Text(texto, { fontSize: 12, fill: '#fff', left: 10, top: 12, fontWeight: 'bold' });
-            const grupo = new fabric.Group([rect, label], { left: 50, top: 50 });
-            canvas.add(grupo);
-            canvas.setActiveObject(grupo);
+        function addElt(text, color) {
+            if(!canvas) return;
+            var rect = new fabric.Rect({ width: 80, height: 45, fill: color, rx: 5, ry: 5 });
+            var label = new fabric.Text(text, { fontSize: 14, fill: '#fff', originX: 'center', originY: 'center', left: 40, top: 22.5, fontWeight: 'bold' });
+            var group = new fabric.Group([rect, label], { left: 50, top: 50 });
+            canvas.add(group);
+            canvas.setActiveObject(group);
+            canvas.renderAll();
         }
 
-        function crearCable(color) {
-            const cable = new fabric.Line([50, 50, 200, 50], {
-                stroke: color,
-                strokeWidth: 4,
-                strokeLineCap: 'round'
+        function addLine(color) {
+            if(!canvas) return;
+            var line = new fabric.Line(, {
+                stroke: color, strokeWidth: 5, strokeLineCap: 'round'
             });
-            canvas.add(cable);
+            canvas.add(line);
+            canvas.renderAll();
         }
 
-        function crearPared() {
-            const pared = new fabric.Rect({
-                left: 100, top: 100, width: 200, height: 10, fill: '#334155'
-            });
-            canvas.add(pared);
-        }
-
-        function limpiar() {
-            canvas.clear();
-            canvas.backgroundColor = '#ffffff';
+        function addWall() {
+            if(!canvas) return;
+            var wall = new fabric.Rect({ left: 100, top: 100, width: 250, height: 12, fill: '#334155' });
+            canvas.add(wall);
             canvas.renderAll();
         }
     </script>
