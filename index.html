@@ -2,120 +2,94 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>MK Electric CAD - REBT Profesional</title>
+    <title>MK Electric CAD</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com"></script>
-    <style>
-        .sidebar { height: calc(100vh - 64px); }
-        canvas { border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .tooltip { position: absolute; background: rgba(15, 23, 42, 0.95); color: #fff; padding: 8px; border-radius: 6px; font-size: 10px; pointer-events: none; visibility: hidden; z-index: 100; border: 1px solid #475569; }
-    </style>
+    <!-- NUEVO ENLACE DE LIBRERÍA MÁS ESTABLE -->
+    <script src="https://cdnjs.cloudflare.com"></script>
 </head>
-<body class="bg-slate-900 text-slate-200 overflow-hidden">
+<body class="bg-[#1a2233] text-slate-300 overflow-hidden">
 
-    <!-- HEADER CON LOGO MK -->
-    <header class="h-16 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-6">
-        <div class="flex items-center gap-4">
-            <svg width="45" height="45" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="48" fill="white" />
-                <path d="M25 75 V25 L50 50 L75 25 V75" stroke="#EAB308" stroke-width="8" fill="none" stroke-linecap="round" />
-                <circle cx="25" cy="75" r="5" fill="#94a3b8" /><circle cx="25" cy="25" r="5" fill="#94a3b8" />
-                <circle cx="50" cy="50" r="5" fill="#94a3b8" /><circle cx="75" cy="25" r="5" fill="#94a3b8" />
-                <circle cx="75" cy="75" r="5" fill="#94a3b8" />
-            </svg>
-            <h1 class="text-xl font-bold tracking-tighter">MK <span class="text-yellow-500 font-light">ELECTRIC CAD</span></h1>
+    <header class="h-16 bg-[#111827] flex items-center justify-between px-6 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center font-bold text-yellow-500 text-xl">MK</div>
+            <h1 class="font-bold text-white tracking-widest uppercase">MK Electric CAD</h1>
         </div>
-        <div class="flex gap-2">
-            <button onclick="deleteSelected()" class="bg-red-600 hover:bg-red-500 px-3 py-1 rounded text-xs font-bold transition">ELIMINAR</button>
-            <button onclick="canvas.clear(); canvas.backgroundColor='#fff'; canvas.renderAll()" class="bg-slate-600 hover:bg-slate-500 px-3 py-1 rounded text-xs transition">LIMPIAR LIENZO</button>
-        </div>
+        <button onclick="limpiar()" class="bg-red-600 hover:bg-red-500 px-4 py-1 rounded text-xs text-white font-bold transition">Limpiar Todo</button>
     </header>
 
-    <main class="flex">
-        <!-- COLUMNA IZQUIERDA: ELÉCTRICA -->
-        <aside class="sidebar w-72 bg-slate-800 p-4 border-r border-slate-700 overflow-y-auto space-y-6">
-            <div>
-                <h2 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Cuadro Eléctrico (REBT)</h2>
+    <main class="flex h-[calc(100vh-64px)]">
+        <!-- Izquierda: Componentes -->
+        <aside class="w-64 bg-[#111827] p-4 border-r border-slate-800 space-y-6 overflow-y-auto">
+            <section>
+                <h2 class="text-[10px] text-slate-500 font-bold uppercase mb-3">Protecciones REBT</h2>
                 <div class="grid grid-cols-2 gap-2">
-                    <button onclick="addComp('IGA', '#ef4444', 'Interruptor General Automático')" class="bg-slate-700 p-2 rounded text-[10px] hover:bg-yellow-600 transition">IGA</button>
-                    <button onclick="addComp('ID', '#f59e0b', 'Interruptor Diferencial')" class="bg-slate-700 p-2 rounded text-[10px] hover:bg-yellow-600 transition">ID</button>
-                    <button onclick="addComp('C1', '#3b82f6', 'Circuito Iluminación - 10A')" class="bg-blue-900 p-2 rounded text-[10px] hover:bg-yellow-600 transition">C1 LUZ</button>
-                    <button onclick="addComp('C2', '#10b981', 'Circuito Tomas - 16A')" class="bg-green-900 p-2 rounded text-[10px] hover:bg-yellow-600 transition">C2 TOMAS</button>
+                    <button onclick="crearPieza('IGA', '#ef4444')" class="bg-slate-800 p-2 rounded text-[10px] hover:bg-slate-700">IGA</button>
+                    <button onclick="crearPieza('ID', '#f59e0b')" class="bg-slate-800 p-2 rounded text-[10px] hover:bg-slate-700">ID</button>
+                    <button onclick="crearPieza('LUZ (C1)', '#3b82f6')" class="bg-blue-900/50 p-2 rounded text-[10px] hover:bg-blue-800">LUZ (C1)</button>
+                    <button onclick="crearPieza('TOMA (C2)', '#10b981')" class="bg-green-900/50 p-2 rounded text-[10px] hover:bg-green-800">TOMA (C2)</button>
                 </div>
-            </div>
+            </section>
 
-            <div>
-                <h2 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Cables Secciones</h2>
-                <button onclick="addCable('#92400e', 'Marrón (Fase) - 2.5mm²')" class="w-full bg-amber-900/40 border border-amber-700 p-2 rounded text-[10px] text-left mb-2">FASE (Marrón)</button>
-                <button onclick="addCable('#1e40af', 'Azul (Neutro) - 2.5mm²')" class="w-full bg-blue-900/40 border border-blue-700 p-2 rounded text-[10px] text-left mb-2">NEUTRO (Azul)</button>
-                <button onclick="addCable('#166534', 'V/A (Tierra) - 2.5mm²')" class="w-full bg-green-900/40 border border-green-700 p-2 rounded text-[10px] text-left">TIERRA (Verde/A)</button>
-            </div>
+            <section>
+                <h2 class="text-[10px] text-slate-500 font-bold uppercase mb-3">Cableado (Colores)</h2>
+                <button onclick="crearCable('#92400e')" class="w-full bg-amber-900/30 border border-amber-700 p-2 rounded text-[10px] text-left mb-2">Fase (Marrón)</button>
+                <button onclick="crearCable('#1e40af')" class="w-full bg-blue-900/30 border border-blue-700 p-2 rounded text-[10px] text-left mb-2">Neutro (Azul)</button>
+                <button onclick="crearCable('#166534')" class="w-full bg-green-900/30 border border-green-700 p-2 rounded text-[10px] text-left">Tierra (Verde/Amar.)</button>
+            </section>
         </aside>
 
-        <!-- ÁREA DE TRABAJO -->
-        <section class="flex-1 bg-slate-700 p-6 flex justify-center items-center relative">
-            <canvas id="mainCanvas"></canvas>
-            <div id="tooltip" class="tooltip">Info Técnica</div>
+        <!-- Centro: Canvas -->
+        <section class="flex-1 p-8 flex justify-center items-center">
+            <canvas id="canvas_electrico" class="rounded shadow-2xl"></canvas>
         </section>
 
-        <!-- COLUMNA DERECHA: ARQUITECTURA -->
-        <aside class="sidebar w-64 bg-slate-800 p-4 border-l border-slate-700 space-y-4">
-            <h2 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Arquitectura</h2>
-            <button onclick="addWall()" class="w-full bg-slate-600 p-2 rounded text-[10px] hover:bg-slate-500 text-left">🧱 PARED (Escalable)</button>
-            <button onclick="addArch('PUERTA', '#94a3b8')" class="w-full bg-slate-600 p-2 rounded text-[10px] hover:bg-slate-500 text-left">🚪 PUERTA</button>
-            <button onclick="addArch('VENTANA', '#bae6fd')" class="w-full bg-slate-600 p-2 rounded text-[10px] hover:bg-slate-500 text-left font-bold text-blue-900">🪟 VENTANA</button>
+        <!-- Derecha: Arquitectura -->
+        <aside class="w-64 bg-[#111827] p-4 border-l border-slate-800">
+            <h2 class="text-[10px] text-slate-500 font-bold uppercase mb-3 font-bold uppercase">Arquitectura</h2>
+            <button onclick="crearPared()" class="w-full bg-slate-800 p-2 rounded text-[10px] hover:bg-slate-700">Dibujar Pared (m)</button>
         </aside>
     </main>
 
     <script>
-        const canvas = new fabric.Canvas('mainCanvas', { width: 800, height: 600, backgroundColor: '#ffffff' });
-        const tooltip = document.getElementById('tooltip');
+        // Inicialización segura del lienzo
+        let canvas;
+        window.onload = function() {
+            canvas = new fabric.Canvas('canvas_electrico', {
+                width: 800,
+                height: 600,
+                backgroundColor: '#ffffff'
+            });
+        };
 
-        function addComp(label, color, info) {
-            const rect = new fabric.Rect({ width: 60, height: 40, fill: color, rx: 5, shadow: 'rgba(0,0,0,0.3) 3px 3px 6px' });
-            const text = new fabric.Text(label, { fontSize: 14, fill: '#fff', originX: 'center', originY: 'center', left: 30, top: 20, fontWeight: 'bold' });
-            const group = new fabric.Group(, { left: 100, top: 100, data: { info: info } });
-            canvas.add(group);
+        function crearPieza(texto, color) {
+            const rect = new fabric.Rect({ width: 60, height: 40, fill: color, rx: 5 });
+            const label = new fabric.Text(texto, { fontSize: 12, fill: '#fff', left: 10, top: 12, fontWeight: 'bold' });
+            const grupo = new fabric.Group([rect, label], { left: 50, top: 50 });
+            canvas.add(grupo);
+            canvas.setActiveObject(grupo);
         }
 
-        function addCable(color, info) {
-            const line = new fabric.Line(, { stroke: color, strokeWidth: 4, strokeLineCap: 'round', data: { info: info } });
-            canvas.add(line);
+        function crearCable(color) {
+            const cable = new fabric.Line([50, 50, 200, 50], {
+                stroke: color,
+                strokeWidth: 4,
+                strokeLineCap: 'round'
+            });
+            canvas.add(cable);
         }
 
-        function addWall() {
-            const wall = new fabric.Rect({ left: 200, top: 200, width: 200, height: 12, fill: '#334155', data: { info: 'Pared: 2.00 metros' } });
-            canvas.add(wall);
+        function crearPared() {
+            const pared = new fabric.Rect({
+                left: 100, top: 100, width: 200, height: 10, fill: '#334155'
+            });
+            canvas.add(pared);
         }
 
-        function addArch(label, color) {
-            const arch = new fabric.Rect({ width: 80, height: 15, fill: color, left: 150, top: 150, data: { info: `Elemento: ${label}` } });
-            canvas.add(arch);
+        function limpiar() {
+            canvas.clear();
+            canvas.backgroundColor = '#ffffff';
+            canvas.renderAll();
         }
-
-        function deleteSelected() {
-            const activeObjects = canvas.getActiveObjects();
-            canvas.discardActiveObject();
-            if (activeObjects.length) {
-                canvas.remove(...activeObjects);
-            }
-        }
-
-        canvas.on('mouse:over', (e) => {
-            if (e.target && e.target.data) {
-                tooltip.style.visibility = 'visible';
-                tooltip.innerHTML = `<strong>TÉCNICO:</strong><br>${e.target.data.info}`;
-            }
-        });
-
-        canvas.on('mouse:move', (e) => {
-            if (tooltip.style.visibility === 'visible') {
-                tooltip.style.left = (e.e.clientX - 100) + 'px';
-                tooltip.style.top = (e.e.clientY - 100) + 'px';
-            }
-        });
-
-        canvas.on('mouse:out', () => tooltip.style.visibility = 'hidden');
     </script>
 </body>
 </html>
