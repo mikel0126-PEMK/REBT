@@ -6,75 +6,55 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com"></script>
 </head>
-<body class="bg-[#1a2233] text-slate-300 overflow-hidden font-sans">
+<body class="bg-[#1a2233] text-slate-300 overflow-hidden">
 
     <header class="h-16 bg-[#111827] flex items-center justify-between px-6 border-b border-slate-800">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center font-bold text-yellow-500 text-xl border-2 border-yellow-500">MK</div>
-            <h1 class="font-bold text-white tracking-widest uppercase text-sm">MK Electric CAD</h1>
+            <h1 class="font-bold text-white uppercase text-sm tracking-widest">MK Electric CAD</h1>
         </div>
-        <button onclick="location.reload()" class="bg-red-600 hover:bg-red-500 px-4 py-1 rounded text-[10px] text-white font-bold">REINICIAR APP</button>
+        <button onclick="location.reload()" class="bg-red-600 px-4 py-1 rounded text-[10px] text-white font-bold">REINICIAR</button>
     </header>
 
     <main class="flex h-[calc(100vh-64px)]">
         <aside class="w-64 bg-[#111827] p-4 border-r border-slate-800 space-y-6">
-            <section>
-                <h2 class="text-[10px] text-slate-500 font-bold uppercase mb-3">Protecciones REBT</h2>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="window.addComp('IGA', '#ef4444')" class="bg-slate-800 p-2 rounded text-[10px] hover:bg-yellow-600 transition active:scale-95">IGA</button>
-                    <button onclick="window.addComp('ID', '#f59e0b')" class="bg-slate-800 p-2 rounded text-[10px] hover:bg-yellow-600 transition active:scale-95">ID</button>
-                    <button onclick="window.addComp('LUZ (C1)', '#3b82f6')" class="bg-blue-900/50 p-2 rounded text-[10px] hover:bg-blue-800">LUZ (C1)</button>
-                    <button onclick="window.addComp('TOMA (C2)', '#10b981')" class="bg-green-900/50 p-2 rounded text-[10px] hover:bg-green-800">TOMA (C2)</button>
-                </div>
-            </section>
-            <section>
-                <h2 class="text-[10px] text-slate-500 font-bold uppercase mb-3 uppercase">Cableado REBT</h2>
-                <button onclick="window.addLine('#92400e')" class="w-full bg-amber-900/30 border border-amber-700 p-2 rounded text-[10px] text-left mb-2">Fase (Marrón)</button>
-                <button onclick="window.addLine('#1e40af')" class="w-full bg-blue-900/30 border border-blue-700 p-2 rounded text-[10px] text-left mb-2">Neutro (Azul)</button>
-                <button onclick="window.addLine('#166534')" class="w-full bg-green-900/30 border border-green-700 p-2 rounded text-[10px] text-left">Tierra (Verde/A)</button>
-            </section>
+            <h2 class="text-[10px] text-slate-500 font-bold uppercase mb-3">Componentes</h2>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="addRect('IGA', '#ef4444')" class="bg-slate-800 p-2 rounded text-[10px] hover:bg-slate-700">IGA</button>
+                <button onclick="addRect('ID', '#f59e0b')" class="bg-slate-800 p-2 rounded text-[10px] hover:bg-slate-700">ID</button>
+            </div>
+            <h2 class="text-[10px] text-slate-500 font-bold uppercase mt-6 mb-3">Cables</h2>
+            <button onclick="addLine('#92400e')" class="w-full bg-amber-900/30 p-2 rounded text-[10px] text-left">Fase (Marrón)</button>
         </aside>
 
         <section class="flex-1 bg-[#1a2233] p-8 flex justify-center items-center">
-            <div class="bg-white p-1 rounded shadow-2xl">
-                <canvas id="mainCanvas" width="600" height="400"></canvas>
-            </div>
+            <canvas id="c" width="600" height="400" style="background:#fff; border: 5px solid #334155; border-radius: 8px;"></canvas>
         </section>
-
-        <aside class="w-64 bg-[#111827] p-4 border-l border-slate-800">
-            <h2 class="text-[10px] text-slate-500 font-bold uppercase mb-3">Arquitectura</h2>
-            <button onclick="window.addWall()" class="w-full bg-slate-700 p-2 rounded text-[10px] hover:bg-slate-600 transition active:scale-95">Pared (m)</button>
-        </aside>
     </main>
 
     <script>
+        // Forzamos la creación del lienzo al cargar
         var canvas;
-        window.onload = function() {
-            canvas = new fabric.Canvas('mainCanvas', { backgroundColor: '#ffffff' });
-            
-            window.addComp = function(text, color) {
-                if (!canvas) return;
-                var rect = new fabric.Rect({ width: 80, height: 45, fill: color, rx: 5, ry: 5 });
-                var label = new fabric.Text(text, { fontSize: 14, fill: '#fff', originX: 'center', originY: 'center', left: 40, top: 22.5, fontWeight: 'bold' });
-                var group = new fabric.Group([rect, label], { left: 50, top: 50 });
-                canvas.add(group);
-                canvas.renderAll();
-            };
+        window.addEventListener('load', function() {
+            canvas = new fabric.Canvas('c');
+            console.log("Motor listo");
+        });
 
-            window.addLine = function(color) {
-                if (!canvas) return;
-                var line = new fabric.Line(, { stroke: color, strokeWidth: 4, strokeLineCap: 'round' });
-                canvas.add(line);
-                canvas.renderAll();
-            };
+        function addRect(label, color) {
+            if(!canvas) return;
+            var rect = new fabric.Rect({ width: 80, height: 45, fill: color, rx: 5, ry: 5 });
+            var text = new fabric.Text(label, { fontSize: 14, fill: '#fff', left: 20, top: 12, fontWeight: 'bold' });
+            var group = new fabric.Group(, { left: 100, top: 100 });
+            canvas.add(group);
+            canvas.renderAll();
+        }
 
-            window.addWall = function() {
-                if (!canvas) return;
-                var wall = new fabric.Rect({ left: 100, top: 100, width: 200, height: 10, fill: '#334155' });
-                canvas.add(wall);
-                canvas.renderAll();
-            };
-        };
+        function addLine(color) {
+            if(!canvas) return;
+            var line = new fabric.Line(, { stroke: color, strokeWidth: 5 });
+            canvas.add(line);
+            canvas.renderAll();
+        }
     </script>
 </body>
 </html>
